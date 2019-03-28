@@ -12,6 +12,10 @@ import cv2
 import os
 import sys
 from tkinter import *
+import serial
+
+arduinodata= serial.Serial('/dev/ttyACM0', 9600)
+
 
 frame=cv2.imread('randompic2.jpg')
 drowsy="Not drowsy"
@@ -34,6 +38,7 @@ time2=0
 timed=0
 D=100
 hc=0
+coordinates=""
 headlight="OFF"
 eye_cascade=cv2.CascadeClassifier('parojosG.xml')
 face_cascade=cv2.CascadeClassifier('haarcascade_frontalface_default.xml')
@@ -61,7 +66,7 @@ def eye_aspect_ratio(eye):
 	# compute the euclidean distance between the horizontal
 	# eye landmark (x, y)-coordinates
     C = dist.euclidean(eye[0], eye[3])
-    print(D)
+    #print(D)
     if(C<25):
         fa=1
         alert=1
@@ -119,6 +124,9 @@ time.sleep(1.0)
 while True:
 	# if this is a file video stream, then we need to check if
 	# there any more frames left in the buffer to process
+    #mes="H"
+    #mes=mes.encode()
+    #arduinodata.write(mes)
     if fileStream and not vs.more():
         break
 
@@ -247,6 +255,16 @@ while True:
         cv2.putText(frame, " z: {}".format(cz), (380, 400),
 			cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 0, 255), 2)
 
+
+        cx1=str(cx-320)
+        cy1=str(cy-240)
+        cz1=str(cz)
+
+        coordinates= cx1+","+cy1
+        coordinate1=coordinates.encode()
+        arduinodata.write(coordinate1)
+        #print(coordinates)
+        #print(arduinodata.readline())
 
 
 	# show the frame
