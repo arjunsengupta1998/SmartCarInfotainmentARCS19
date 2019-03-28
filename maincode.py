@@ -13,8 +13,12 @@ import os
 import sys
 from tkinter import *
 
+frame=cv2.imread('randompic2.jpg')
+drowsy="Not drowsy"
 cx=0
 cy=0
+cz=0
+fa=0
 flag=0
 fd=0
 fdo=0
@@ -28,6 +32,7 @@ tdd=0
 time1=0
 time2=0
 timed=0
+D=100
 hc=0
 headlight="OFF"
 eye_cascade=cv2.CascadeClassifier('parojosG.xml')
@@ -42,18 +47,34 @@ resize=cv2.imread('randompic2.jpg')
 def eye_aspect_ratio(eye):
 	# compute the euclidean distances between the two sets of
 	# vertical eye landmarks (x, y)-coordinates
-	A = dist.euclidean(eye[1], eye[5])
-	B = dist.euclidean(eye[2], eye[4])
+    A = dist.euclidean(eye[1], eye[5])
+    B = dist.euclidean(eye[2], eye[4])
+    D=(A+B)/2
+    if(D<8):
+        drowsy="drowsy"
+    else:
+        drowsy="Not drowsy"
+
+    cv2.putText(frame, "Drowsiness Status: {}".format(drowsy), (200, 300),
+        cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 0, 255), 2)
 
 	# compute the euclidean distance between the horizontal
 	# eye landmark (x, y)-coordinates
-	C = dist.euclidean(eye[0], eye[3])
+    C = dist.euclidean(eye[0], eye[3])
+    print(D)
+    if(C<25):
+        fa=1
+        alert=1
+        amessage="Driver is DISTRACTED!"
+        cv2.putText(frame, "Attention Span: {}".format(amessage), (200, 100),
+            cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 0, 255), 2)
 
 	# compute the eye aspect ratio
-	ear = (A + B) / (2.0 * C)
+    ear = (A + B) / (2.0 * C)
+
 
 	# return the eye aspect ratio
-	return ear
+    return ear
 # construct the argument parse and parse the arguments
 
 ap = argparse.ArgumentParser()
@@ -116,6 +137,7 @@ while True:
         frame = cv2.rectangle(frame,(x,y),(x+w,y+h),(255,0,0),2)
         cx=x+w/2
         cy=y+h/2
+        cz=460-h
 
 
 
@@ -218,10 +240,13 @@ while True:
         cv2.putText(frame, "Attention Span: {}".format(amessage), (200, 100),
 			cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 0, 255), 2)
 
-        cv2.putText(frame, " x-coordinate: {}".format(cx), (10, 150),
+        cv2.putText(frame, " x: {}".format(cx), (10, 400),
 			cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 0, 255), 2)
-        cv2.putText(frame, " y-coordinate: {}".format(cy), (380, 150),
+        cv2.putText(frame, " y: {}".format(cy), (200, 400),
 			cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 0, 255), 2)
+        cv2.putText(frame, " z: {}".format(cz), (380, 400),
+			cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 0, 255), 2)
+
 
 
 	# show the frame
@@ -266,13 +291,15 @@ while True:
         td2=time.time()
 
         tdd= td2-td1
-        if(tdd>1 and fd!=0):
+        if((tdd>1 and fd!=0) or fa==1):
             print("Alert!")
             alert=1
             amessage="Driver is DISTRACTED!"
         else:
-            alert=0
-            amessage="Driver is Alert"
+            if(fa!=1):
+                alert=0
+                amessage="Driver is Alert"
+                fa=0
 
     roi_gray=cv2.morphologyEx(roi_gray,cv2.MORPH_OPEN,kernel)
 
@@ -281,6 +308,13 @@ while True:
     if(cnt==2):
         os.system('clear')
         print(direction)
+        #print(eye[0])
+        #print(eye[1])
+        #print(eye[2])
+        #print(eye[3])
+        #print(eye[4])
+        #print(eye[5])
+        #print("Distance: "+ C)
 
 
         cnt=0
