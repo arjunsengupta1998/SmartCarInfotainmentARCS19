@@ -1,4 +1,4 @@
-#“Intellifotainment assist” – Smart HMI for passenger cars
+# Intellifotainment assist” – Smart HMI for passenger cars
 
 To run the program, download all files and save them in the same directory.
 After that, simply run 'Master.py' in the terminal.
@@ -6,7 +6,7 @@ After that, simply run 'Master.py' in the terminal.
 At the moment, the program will only run in linux based systems.
 
 
- #The Idea
+ # The Idea
 Infotainment systems have come a long way since the first set of dashboards installed in cars. Through our idea, we aim to create a Human Machine interaction model that takes infotainment systems to a new level. The driver tends to get distracted from the road while performing secondary tasks such as changing the music track, locking/unlocking the door while driving etc. Our system shall enable the driver to focus only on driving. Controlling the secondary tasks will be much easier.
 Our product primarily comprises of 5 modules:
 
